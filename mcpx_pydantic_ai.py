@@ -15,6 +15,8 @@ def _convert_type(t):
         return float
     elif t == "integer":
         return int
+    elif t == "object":
+        return dict
     raise TypeError(f"Unhandled conversion type: {t}")
 
 
