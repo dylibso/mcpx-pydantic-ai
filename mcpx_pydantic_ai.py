@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 from typing import TypedDict
 import traceback
 
+__all__ = ["BaseModel", "Field", "Agent"]
+
 
 def _convert_type(t):
     if t == "string":
@@ -17,10 +19,16 @@ def _convert_type(t):
         return int
     elif t == "object":
         return dict
+    elif t == "array":
+        return list
     raise TypeError(f"Unhandled conversion type: {t}")
 
 
 class Agent(pydantic_ai.Agent):
+    """
+    A Pydantic Agent using tools from mcp.run
+    """
+
     client: mcpx.Client
     _original_tools: list
 
@@ -47,7 +55,7 @@ class Agent(pydantic_ai.Agent):
                         res = self.client.call(tool=tool.name, input=input)
                         return res.content[0].text
                     except Exception as exc:
-                        return f"ERROR: Tool call failed, {traceback.format_exception(exc)}"
+                        return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
 
                 return f
 
@@ -62,6 +70,10 @@ class Agent(pydantic_ai.Agent):
     def run(self, *args, **kw):
         self._update_tools()
         return super().run(*args, **kw)
+
+    def run_sync(self, *args, **kw):
+        self._update_tools()
+        return super().run_sync(*args, **kw)
 
     async def run_async(self, *args, **kw):
         self._update_tools()
