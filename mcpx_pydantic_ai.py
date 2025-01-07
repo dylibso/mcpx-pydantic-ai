@@ -1,5 +1,6 @@
 import mcpx
 import pydantic_ai
+from pydantic import BaseModel, Field
 
 from typing import TypedDict
 import traceback
@@ -29,7 +30,7 @@ class Agent(pydantic_ai.Agent):
 
     def _update_tools(self):
         self._function_tools = {}
-        for t in self._original_tools.values():
+        for t in self._original_tools.copy().values():
             self._register_tool(t)
 
         for tool in self.client.tools.values():

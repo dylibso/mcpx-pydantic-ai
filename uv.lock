@@ -404,6 +404,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "mcpx" },
+    { name = "pydantic" },
     { name = "pydantic-ai" },
 ]
 
@@ -417,6 +418,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "mcpx", git = "https://github.com/dylibso/mcpx-py" },
+    { name = "pydantic", specifier = ">=2.10.4" },
     { name = "pydantic-ai", specifier = ">=0.0.17" },
 ]
 

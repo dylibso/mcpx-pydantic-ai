@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "mcpx",
+    "pydantic>=2.10.4",
     "pydantic-ai>=0.0.17",
 ]
 

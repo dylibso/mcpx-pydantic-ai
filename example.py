@@ -1,13 +1,20 @@
-from mcpx_pydantic_ai import Agent
+from mcpx_pydantic_ai import Agent, BaseModel, Field
+import readline
 
+import code
 
-def main():
-    agent = Agent("claude-3-5-sonnet-latest", result_type=int)
-    results = agent.run_sync(
-        "find the largest prime under 1000 that ends with the digit '3'"
-    )
-    print(results.data)
+def new_agent(result_type, model="claude-3-5-sonnet-latest"):
+    """
+    Create a new agent for the given return type
+    """
+    return Agent(model, result_type=result_type)
 
+def run(agent, msg):
+    """
+    Send a message to an agent and return the result
+    """
+    result = agent.run_sync(msg)
+    return result.data
 
-if __name__ == "__main__":
-    main()
+# Start interactive shell
+code.interact(local=locals())
