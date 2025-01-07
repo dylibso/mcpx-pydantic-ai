@@ -34,13 +34,16 @@ class Agent(pydantic_ai.Agent):
 
     def __init__(self, *args, client: mcpx.Client | None = None, **kw):
         self.client = client or mcpx.Client()
-        self._original_tools = {t.name: t for t in kw.get("tools", {})}
+        self._original_tools = kw.get("tools", [])
         super().__init__(*args, **kw)
         self._update_tools()
 
     def _update_tools(self):
+        if not self.client.install_cache.needs_refresh():
+            return
+
         self._function_tools = {}
-        for t in self._original_tools.copy().values():
+        for t in self._original_tools.copy():
             self._register_tool(t)
 
         for tool in self.client.tools.values():
