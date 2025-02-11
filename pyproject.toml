@@ -5,7 +5,7 @@ description = "Pydantic Agent with mcp.run tools"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "mcpx-py",
+    "mcp-run>=0.1.0",
     "pydantic>=2.10.4",
     "pydantic-ai>=0.0.17",
 ]

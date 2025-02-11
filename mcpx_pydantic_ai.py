@@ -1,4 +1,4 @@
-import mcpx
+import mcp_run
 import pydantic_ai
 from pydantic import BaseModel, Field
 
@@ -29,11 +29,11 @@ class Agent(pydantic_ai.Agent):
     A Pydantic Agent using tools from mcp.run
     """
 
-    client: mcpx.Client
+    client: mcp_run.Client
     _original_tools: list
 
-    def __init__(self, *args, client: mcpx.Client | None = None, **kw):
-        self.client = client or mcpx.Client()
+    def __init__(self, *args, client: mcp_run.Client | None = None, **kw):
+        self.client = client or mcp_run.Client()
         self._original_tools = kw.get("tools", [])
         super().__init__(*args, **kw)
         self._update_tools()
