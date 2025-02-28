@@ -58,9 +58,6 @@ class Agent(pydantic_ai.Agent):
                         res = self.client.call_tool(tool=tool.name, params=input)
                         return res.content[0].text
                     except Exception as exc:
-                        print(
-                            f"XXX ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
-                        )
                         return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
 
                 return f
