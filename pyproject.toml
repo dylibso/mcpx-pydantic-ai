@@ -16,3 +16,8 @@ dev = [
     "python-lsp-server>=1.12.0",
     "ruff>=0.8.6",
 ]
+
+# Workaround for uv/setuptools version mismatch
+# https://github.com/astral-sh/uv/issues/9513#issuecomment-2519527822
+[tool.setuptools]
+license-files = []
