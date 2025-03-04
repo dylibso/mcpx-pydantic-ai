@@ -84,4 +84,5 @@ class Agent(pydantic_ai.Agent):
 
     async def run_stream(self, *args, **kw):
         self._update_tools()
-        return await super().run_stream(*args, **kw)
+        async for x in super().run_stream(*args, **kw):
+            yield x
