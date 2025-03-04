@@ -51,9 +51,6 @@ class Agent(pydantic_ai.Agent):
         self._update_tools()
 
     def _update_tools(self):
-        if not self.client.install_cache.needs_refresh():
-            return
-
         self._function_tools = {}
         for t in self._original_tools.copy():
             self._register_tool(t)
