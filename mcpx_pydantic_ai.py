@@ -70,9 +70,9 @@ class Agent(pydantic_ai.Agent):
                 )
             )
 
-    def run(self, *args, **kw):
+    async def run(self, *args, **kw):
         self._update_tools()
-        return super().run(*args, **kw)
+        return await super().run(*args, **kw)
 
     def run_sync(self, *args, **kw):
         self._update_tools()
@@ -82,6 +82,6 @@ class Agent(pydantic_ai.Agent):
         self._update_tools()
         return await super().run_async(*args, **kw)
 
-    def run_stream(self, *args, **kw):
+    async def run_stream(self, *args, **kw):
         self._update_tools()
-        return super().run_stream(*args, **kw)
+        return await super().run_stream(*args, **kw)
