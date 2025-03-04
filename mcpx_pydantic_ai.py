@@ -2,9 +2,8 @@ import mcp_run
 import pydantic_ai
 from pydantic import BaseModel, Field
 
-from typing import TypedDict
+from typing import TypedDict, List, Set
 import traceback
-from contextlib import asynccontextmanager
 
 __all__ = ["BaseModel", "Field", "Agent"]
 
@@ -31,12 +30,24 @@ class Agent(pydantic_ai.Agent):
     """
 
     client: mcp_run.Client
+    ignore_tools: Set[str]
     _original_tools: list
 
-    def __init__(self, *args, client: mcp_run.Client | None = None, **kw):
+    def __init__(
+        self,
+        *args,
+        client: mcp_run.Client | None = None,
+        ignore_tools: List[str] | None = None,
+        **kw,
+    ):
         self.client = client or mcp_run.Client()
         self._original_tools = kw.get("tools", [])
+        self.ignore_tools = set(ignore_tools or [])
         super().__init__(*args, **kw)
+        self._update_tools()
+
+    def set_profile(self, profile: str):
+        self.client.set_profile(profile)
         self._update_tools()
 
     def _update_tools(self):
@@ -48,6 +59,8 @@ class Agent(pydantic_ai.Agent):
             self._register_tool(t)
 
         for tool in self.client.tools.values():
+            if tool.name in self.ignore_tools:
+                continue
 
             def wrap(tool):
                 props = tool.input_schema["properties"]
