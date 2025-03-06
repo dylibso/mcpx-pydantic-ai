@@ -95,7 +95,7 @@ class Agent(pydantic_ai.Agent):
             self._registered_tools.append(tool.name)
 
     def reset_tools(self):
-        for k in self._function_tools.keys():
+        for k in list(self._function_tools.keys()):
             if k not in self._registered_tools:
                 del self._function_tools[k]
 
