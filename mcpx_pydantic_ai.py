@@ -83,8 +83,6 @@ class Agent(pydantic_ai.Agent):
 
             return f
 
-        self._registered_tools.append(tool.name)
-
         self._register_tool(
             pydantic_ai.Tool(
                 wrap(tool, f),
@@ -93,8 +91,9 @@ class Agent(pydantic_ai.Agent):
             )
         )
 
+        self._registered_tools.append(tool.name)
+
     def reset_tools(self):
-        self._function_tools = {}
         for k in self._function_tools.keys():
             if k not in self._registered_tools:
                 del self._function_tools[k]
