@@ -2,6 +2,8 @@ import mcp_run
 import pydantic_ai
 import pydantic
 from pydantic import BaseModel, Field
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
 
 from typing import TypedDict, List, Set, AsyncIterator, Any
 import traceback
@@ -29,10 +31,8 @@ def openai_compatible_model(url: str, model: str, api_key: str | None = None):
     """
     Returns an OpenAI compatible model from the provided `url`, `model` name and optional `api_key`
     """
-    provider = pydantic_ai.providers.openai.OpenAIProvider(
-        base_url=url, api_key=api_key
-    )
-    pydantic_ai.models.openai.OpenAIModel(model, provider=provider)
+    provider = OpenAIProvider(base_url=url, api_key=api_key)
+    return OpenAIModel(model, provider=provider)
 
 
 class Agent(pydantic_ai.Agent):
