@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 
 from typing import TypedDict, List, Set, AsyncIterator, Any
 import traceback
-from contextlib import asynccontextmanager
 
 __all__ = ["BaseModel", "Field", "Agent", "mcp_run", "pydantic_ai", "pydantic"]
 
@@ -34,6 +33,7 @@ class Agent(pydantic_ai.Agent):
     client: mcp_run.Client
     ignore_tools: Set[str]
     _original_tools: list
+    _registered_tools: List[str]
 
     def __init__(
         self,
@@ -44,9 +44,13 @@ class Agent(pydantic_ai.Agent):
     ):
         self.client = client or mcp_run.Client()
         self._original_tools = kw.get("tools", [])
+        self._registered_tools = []
         self.ignore_tools = set(ignore_tools or [])
         super().__init__(*args, **kw)
         self._update_tools()
+
+        for t in self._original_tools:
+            self._registered_tools.append(t.name)
 
     def set_profile(self, profile: str):
         self.client.set_profile(profile)
@@ -79,6 +83,8 @@ class Agent(pydantic_ai.Agent):
 
             return f
 
+        self._registered_tools.append(tool.name)
+
         self._register_tool(
             pydantic_ai.Tool(
                 wrap(tool, f),
@@ -89,38 +95,46 @@ class Agent(pydantic_ai.Agent):
 
     def reset_tools(self):
         self._function_tools = {}
-        for t in self._original_tools.copy():
-            self._register_tool(t)
+        for k in self._function_tools.keys():
+            if k not in self._registered_tools:
+                del self._function_tools[k]
 
     def _update_tools(self):
         self.reset_tools()
         for tool in self.client.tools.values():
             self.register_tool(tool)
 
-    async def run(self, *args, **kw):
-        self._update_tools()
+    async def run(self, *args, update_tools: bool = True, **kw):
+        if update_tools:
+            self._update_tools()
         return await super().run(*args, **kw)
 
-    def run_sync(self, *args, **kw):
-        self._update_tools()
+    def run_sync(self, *args, update_tools: bool = True, **kw):
+        if update_tools:
+            self._update_tools()
         return super().run_sync(*args, **kw)
 
-    async def run_async(self, *args, **kw):
-        self._update_tools()
+    async def run_async(self, *args, update_tools: bool = True, **kw):
+        if update_tools:
+            self._update_tools()
         return await super().run_async(*args, **kw)
 
     def run_stream(
         self,
         *args,
+        update_tools: bool = True,
         **kw,
     ) -> AsyncIterator[Any]:
-        self._update_tools()
+        if update_tools:
+            self._update_tools()
         return super().run_stream(*args, **kw)
 
     def iter(
         self,
         *args,
+        update_tools: bool = True,
         **kw,
     ) -> AsyncIterator[Any]:
-        self._update_tools()
+        if update_tools:
+            self._update_tools()
         return super().iter(*args, **kw)
