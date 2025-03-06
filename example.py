@@ -2,6 +2,7 @@ from mcpx_pydantic_ai import Agent, BaseModel, Field
 
 from typing import List
 import readline
+import asyncio
 
 from pydantic_ai import capture_run_messages
 
@@ -25,15 +26,13 @@ def new_agent(result_type, model="claude-3-5-sonnet-latest"):
 history = []
 
 
-def run(agent, msg):
+async def run(agent, msg):
     """
     Send a message to an agent and return the result
     """
     global history
-    with capture_run_messages() as messages:
-        result = agent.run_sync(msg, message_history=history)
-        history.extend(messages)
-    return result.data
+    async with agent.run_stream(msg, message_history=history) as result:
+        return await result.get_data()
 
 
 types = ImageList | VowelCount
@@ -57,5 +56,5 @@ class Type_{name}(BaseModel):
         t = eval(f"Type_{name}")
         agent = new_agent(types | t)
         continue
-    res = run(agent, msg)
+    res = asyncio.run(run(agent, msg))
     print(">>", res)

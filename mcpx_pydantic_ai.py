@@ -2,8 +2,9 @@ import mcp_run
 import pydantic_ai
 from pydantic import BaseModel, Field
 
-from typing import TypedDict, List, Set
+from typing import TypedDict, List, Set, AsyncIterator, Any
 import traceback
+from contextlib import asynccontextmanager
 
 __all__ = ["BaseModel", "Field", "Agent"]
 
@@ -92,3 +93,19 @@ class Agent(pydantic_ai.Agent):
     async def run_async(self, *args, **kw):
         self._update_tools()
         return await super().run_async(*args, **kw)
+
+    def run_stream(
+        self,
+        *args,
+        **kw,
+    ) -> AsyncIterator[Any]:
+        self._update_tools()
+        return super().run_stream(*args, **kw)
+
+    def iter(
+        self,
+        *args,
+        **kw,
+    ) -> AsyncIterator[Any]:
+        self._update_tools()
+        return super().iter(*args, **kw)
