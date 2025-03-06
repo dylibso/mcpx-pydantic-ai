@@ -91,7 +91,8 @@ class Agent(pydantic_ai.Agent):
             )
         )
 
-        self._registered_tools.append(tool.name)
+        if f is not None:
+            self._registered_tools.append(tool.name)
 
     def reset_tools(self):
         for k in self._function_tools.keys():
