@@ -1,12 +1,13 @@
 import mcp_run
 import pydantic_ai
+import pydantic
 from pydantic import BaseModel, Field
 
 from typing import TypedDict, List, Set, AsyncIterator, Any
 import traceback
 from contextlib import asynccontextmanager
 
-__all__ = ["BaseModel", "Field", "Agent"]
+__all__ = ["BaseModel", "Field", "Agent", "mcp_run", "pydantic_ai", "pydantic"]
 
 
 def _convert_type(t):
