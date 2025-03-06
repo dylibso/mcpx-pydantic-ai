@@ -52,36 +52,41 @@ class Agent(pydantic_ai.Agent):
         self.client.set_profile(profile)
         self._update_tools()
 
-    def _update_tools(self):
+    def register_tool(self, tool: mcp_run.Tool):
+        if tool.name in self.ignore_tools:
+            return
+
+        def wrap(tool):
+            props = tool.input_schema["properties"]
+            t = {k: _convert_type(v["type"]) for k, v in props.items()}
+            InputType = TypedDict("Input", t)
+
+            def f(input: InputType):
+                try:
+                    res = self.client.call_tool(tool=tool.name, params=input)
+                    return res.content[0].text
+                except Exception as exc:
+                    return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
+
+            return f
+
+        self._register_tool(
+            pydantic_ai.Tool(
+                wrap(tool),
+                name=tool.name,
+                description=tool.description,
+            )
+        )
+
+    def reset_tools(self):
         self._function_tools = {}
         for t in self._original_tools.copy():
             self._register_tool(t)
 
+    def _update_tools(self):
+        self.reset_tools()
         for tool in self.client.tools.values():
-            if tool.name in self.ignore_tools:
-                continue
-
-            def wrap(tool):
-                props = tool.input_schema["properties"]
-                t = {k: _convert_type(v["type"]) for k, v in props.items()}
-                InputType = TypedDict("Input", t)
-
-                def f(input: InputType):
-                    try:
-                        res = self.client.call_tool(tool=tool.name, params=input)
-                        return res.content[0].text
-                    except Exception as exc:
-                        return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
-
-                return f
-
-            self._register_tool(
-                pydantic_ai.Tool(
-                    wrap(tool),
-                    name=tool.name,
-                    description=tool.description,
-                )
-            )
+            self.register_tool(tool)
 
     async def run(self, *args, **kw):
         self._update_tools()
