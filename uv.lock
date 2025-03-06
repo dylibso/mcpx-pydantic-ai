@@ -513,20 +513,20 @@ wheels = [
 
 [[package]]
 name = "mcp-run"
-version = "0.1.4"
+version = "0.1.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "extism" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e7/66/24a8b280570d7727b4f247c81d54c05ecbc9ec80f8665e8d47211744527b/mcp_run-0.1.4.tar.gz", hash = "sha256:e23f7232a096eb473b741a75cf79b02867c775d053e56d19ddf3f26476a970db", size = 14159 }
+sdist = { url = "https://files.pythonhosted.org/packages/09/ef/0048b309955fe714cfb9a08fe826f3d3f9a821ae78efe5d9f747785e091c/mcp_run-0.1.5.tar.gz", hash = "sha256:ca8fc6803750adc009a173328b35d569306d2a4a068cccb295370665746f872d", size = 14207 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/95/39/65e36395f8b4889e7c43bfc137ed84eb9b4a08b75b0300e21b1fb3f1b941/mcp_run-0.1.4-py3-none-any.whl", hash = "sha256:8b3cec462c5253e6b7f594c1fc7cb94ddddebe983a8ecb5946c01ed1316eae9a", size = 15343 },
+    { url = "https://files.pythonhosted.org/packages/91/98/c545dc0a26121abba5f8ba8d4959d44b6151326cce1413631ec218b01768/mcp_run-0.1.5-py3-none-any.whl", hash = "sha256:cbcfe91878a7666611560a504a05cc9fc11105cb1029de851fcf8a5ace80d296", size = 15367 },
 ]
 
 [[package]]
 name = "mcpx-pydantic-ai"
-version = "0.3.0"
+version = "0.3.3"
 source = { virtual = "." }
 dependencies = [
     { name = "mcp-run" },
@@ -566,7 +566,7 @@ wheels = [
 
 [[package]]
 name = "mistralai"
-version = "1.5.0"
+version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "eval-type-backport" },
@@ -576,9 +576,9 @@ dependencies = [
     { name = "python-dateutil" },
     { name = "typing-inspect" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/16/9d/aba193fdfe0fc7403efa380189143d965becfb1bc7df3230e5c7664f8c53/mistralai-1.5.0.tar.gz", hash = "sha256:fd94bc93bc25aad9c6dd8005b1a0bc4ba1250c6b3fbf855a49936989cc6e5c0d", size = 131647 }
+sdist = { url = "https://files.pythonhosted.org/packages/91/36/a722dc70b61b8a7920d2fb5c8cff85b7816e071b1af96615b2b19c042412/mistralai-1.5.1.tar.gz", hash = "sha256:ce4b8c7aa587521c46dbc45d42e27575f6197c0229f47242e5b331875104707b", size = 133512 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/e7/7147c75c383a975c58c33f8e7ee7dbbb0e7390fbcb1ecd321f63e4c73efd/mistralai-1.5.0-py3-none-any.whl", hash = "sha256:9372537719f87bd6f9feef4747d0bf1f4fbe971f8c02945ca4b4bf3c94571c97", size = 271559 },
+    { url = "https://files.pythonhosted.org/packages/25/41/ada2fcb82ef918a7906bb63e008781ffa29d7d8608145d4b41d4d477504c/mistralai-1.5.1-py3-none-any.whl", hash = "sha256:881f8a1b9a7966d15bd1eb4ed05df09483c261f826c1b9d153ceeca605dc79ac", size = 278253 },
 ]
 
 [[package]]
