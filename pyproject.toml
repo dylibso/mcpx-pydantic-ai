@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "mcp-run>=0.1.4",
     "pydantic>=2.10.4",
-    "pydantic-ai>=0.0.17",
+    "pydantic-ai>=0.0.35",
 ]
 
 [dependency-groups]

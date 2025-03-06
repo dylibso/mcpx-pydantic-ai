@@ -545,7 +545,7 @@ dev = [
 requires-dist = [
     { name = "mcp-run", specifier = ">=0.1.4" },
     { name = "pydantic", specifier = ">=2.10.4" },
-    { name = "pydantic-ai", specifier = ">=0.0.17" },
+    { name = "pydantic-ai", specifier = ">=0.0.35" },
 ]
 
 [package.metadata.requires-dev]

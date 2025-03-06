@@ -25,6 +25,16 @@ def _convert_type(t):
     raise TypeError(f"Unhandled conversion type: {t}")
 
 
+def openai_compatible_model(url: str, model: str, api_key: str | None = None):
+    """
+    Returns an OpenAI compatible model from the provided `url`, `model` name and optional `api_key`
+    """
+    provider = pydantic_ai.providers.openai.OpenAIProvider(
+        base_url=url, api_key=api_key
+    )
+    pydantic_ai.models.openai.OpenAIModel(model, provider=provider)
+
+
 class Agent(pydantic_ai.Agent):
     """
     A Pydantic Agent using tools from mcp.run
