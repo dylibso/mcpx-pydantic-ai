@@ -52,27 +52,36 @@ class Agent(pydantic_ai.Agent):
         self.client.set_profile(profile)
         self._update_tools()
 
-    def register_tool(self, tool: mcp_run.Tool):
+    def register_tool(self, tool: mcp_run.Tool, f=None):
         if tool.name in self.ignore_tools:
             return
 
-        def wrap(tool):
+        def wrap(tool, inner):
             props = tool.input_schema["properties"]
             t = {k: _convert_type(v["type"]) for k, v in props.items()}
             InputType = TypedDict("Input", t)
 
-            def f(input: InputType):
-                try:
-                    res = self.client.call_tool(tool=tool.name, params=input)
-                    return res.content[0].text
-                except Exception as exc:
-                    return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
+            if inner is not None:
+
+                def f(input: InputType):
+                    try:
+                        return inner(input)
+                    except Exception as exc:
+                        return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
+            else:
+
+                def f(input: InputType):
+                    try:
+                        res = self.client.call_tool(tool=tool.name, params=input)
+                        return res.content[0].text
+                    except Exception as exc:
+                        return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
 
             return f
 
         self._register_tool(
             pydantic_ai.Tool(
-                wrap(tool),
+                wrap(tool, f),
                 name=tool.name,
                 description=tool.description,
             )
