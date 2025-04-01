@@ -41,6 +41,11 @@ class MockClient:
     def set_profile(self, profile: str):
         self.profile = profile
 
+    def _make_pydantic_function(self, tool):
+        def test(input: dict):
+            return self.call_tool(tool.name, input).content[0].text
+        return test
+
 
 class TestTypeConversion(unittest.TestCase):
     def test_convert_basic_types(self):
