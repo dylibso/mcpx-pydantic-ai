@@ -2,6 +2,9 @@ import unittest
 from unittest.mock import Mock, patch
 from mcpx_pydantic_ai import Agent, _convert_type
 from typing import Dict, Any
+import os
+
+os.environ["ANTHROPIC_API_KEY"] = "something"
 
 
 class MockTool:
