@@ -2,6 +2,9 @@ import unittest
 from unittest.mock import Mock, patch
 from mcpx_pydantic_ai import Agent, _convert_type
 from typing import Dict, Any
+import os
+
+os.environ["ANTHROPIC_API_KEY"] = "something"
 
 
 class MockTool:
@@ -40,6 +43,11 @@ class MockClient:
 
     def set_profile(self, profile: str):
         self.profile = profile
+
+    def _make_pydantic_function(self, tool):
+        def test(input: dict):
+            return self.call_tool(tool.name, input).content[0].text
+        return test
 
 
 class TestTypeConversion(unittest.TestCase):

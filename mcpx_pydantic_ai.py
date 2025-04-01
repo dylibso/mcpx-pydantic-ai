@@ -4,27 +4,12 @@ import pydantic
 from pydantic import BaseModel, Field
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from mcp_run.client import _convert_type
 
 from typing import TypedDict, List, Set, AsyncIterator, Any
 import traceback
 
 __all__ = ["BaseModel", "Field", "Agent", "mcp_run", "pydantic_ai", "pydantic"]
-
-
-def _convert_type(t):
-    if t == "string":
-        return str
-    elif t == "boolean":
-        return bool
-    elif t == "number":
-        return float
-    elif t == "integer":
-        return int
-    elif t == "object":
-        return dict
-    elif t == "array":
-        return list
-    raise TypeError(f"Unhandled conversion type: {t}")
 
 
 def openai_compatible_model(url: str, model: str, api_key: str | None = None):
@@ -71,27 +56,20 @@ class Agent(pydantic_ai.Agent):
             return
 
         def wrap(tool, inner):
-            props = tool.input_schema["properties"]
-            t = {k: _convert_type(v["type"]) for k, v in props.items()}
-            InputType = TypedDict("Input", t)
-
             if inner is not None:
+                props = tool.input_schema["properties"]
+                t = {k: _convert_type(v["type"]) for k, v in props.items()}
+                InputType = TypedDict("Input", t)
 
                 def f(input: InputType):
                     try:
                         return inner(input)
                     except Exception as exc:
                         return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
+
+                return f
             else:
-
-                def f(input: InputType):
-                    try:
-                        res = self.client.call_tool(tool=tool.name, params=input)
-                        return res.content[0].text
-                    except Exception as exc:
-                        return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
-
-            return f
+                return self.client._make_pydantic_function(tool)
 
         self._register_tool(
             pydantic_ai.Tool(
