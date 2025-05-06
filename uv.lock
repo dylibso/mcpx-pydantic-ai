@@ -579,7 +579,7 @@ wheels = [
 [[package]]
 name = "mcp-run"
 version = "0.4.6"
-source = { git = "https://github.com/dylibso/mcp-run-py?branch=feat-remote-servlets#53d1dda385500dcfde35c83d59570726afa72636" }
+source = { git = "https://github.com/dylibso/mcp-run-py?branch=feat-remote-servlets#0cf5fa91f0d1e732249b0d19ce9835465657eeed" }
 dependencies = [
     { name = "extism" },
     { name = "mcp" },
