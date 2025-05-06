@@ -12,6 +12,7 @@ class MockTool:
         self.name = name
         self.description = description
         self.input_schema = input_schema
+        self.is_remote = False
 
 
 class MockResponse:
@@ -47,6 +48,7 @@ class MockClient:
     def _make_pydantic_function(self, tool):
         def test(input: dict):
             return self.call_tool(tool.name, input).content[0].text
+
         return test
 
 
