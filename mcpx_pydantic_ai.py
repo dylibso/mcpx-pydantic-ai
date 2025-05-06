@@ -4,6 +4,7 @@ import pydantic
 from pydantic import BaseModel, Field
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.mcp import MCPServerHTTP
 from mcp_run.client import _convert_type
 
 from typing import TypedDict, List, Set, AsyncIterator, Any
@@ -55,6 +56,17 @@ class Agent(pydantic_ai.Agent):
         if tool.name in self.ignore_tools:
             return
 
+        if tool.is_remote:
+            if not isinstance(self._mcp_servers, set):
+                self._mcp_servers = list(self._mcp_servers)
+            for server in self._mcp_servers:
+                if server.url == tool.url:
+                    continue
+            self._mcp_servers.append(
+                MCPServerHTTP(tool.url, headers=tool.headers(self.client))
+            )
+            return
+
         def wrap(tool, inner):
             if inner is not None:
                 props = tool.input_schema["properties"]
@@ -102,10 +114,10 @@ class Agent(pydantic_ai.Agent):
             self._update_tools()
         return super().run_sync(*args, **kw)
 
-    async def run_async(self, *args, update_tools: bool = True, **kw):
+    def run_async(self, *args, update_tools: bool = True, **kw):
         if update_tools:
             self._update_tools()
-        return await super().run_async(*args, **kw)
+        return super().run_async(*args, **kw)
 
     def run_stream(
         self,
