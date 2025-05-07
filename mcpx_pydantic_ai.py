@@ -6,12 +6,19 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
 from datetime import timedelta
-from mcp_run import MCPClient
+from mcp_run import MCPClient, SSEClientConfig, StdioClientConfig
 
-from typing import TypedDict, List, Set, AsyncIterator, Any
-import traceback
-
-__all__ = ["BaseModel", "Field", "Agent", "mcp_run", "pydantic_ai", "pydantic"]
+__all__ = [
+    "BaseModel",
+    "Field",
+    "Agent",
+    "mcp_run",
+    "pydantic_ai",
+    "pydantic",
+    "MCPClient",
+    "SSEClientConfig",
+    "StdioClientConfig",
+]
 
 
 def openai_compatible_model(url: str, model: str, api_key: str | None = None):
@@ -38,7 +45,9 @@ class Agent(pydantic_ai.Agent):
         **kw,
     ):
         self.client = client or mcp_run.Client()
-        mcp = mcp_client or self.client.mcp_sse(profile=self.client.config.profile)
+        mcp = mcp_client or self.client.mcp_sse(
+            profile=self.client.config.profile, expires_in=expires_in
+        )
         mcp_servers = kw.get("mcp_servers", [])
         if mcp.is_sse:
             mcp_servers.append(MCPServerHTTP(url=mcp.config.url))
@@ -54,5 +63,10 @@ class Agent(pydantic_ai.Agent):
         kw["mcp_servers"] = mcp_servers
         super().__init__(*args, **kw)
 
-    def set_profile(self, profile: str):
-        self.client.set_profile(profile)
+    @property
+    def profile(self) -> str:
+        return self.client.config.profile
+
+    @profile.setter
+    def profile(self, p: str):
+        self.client.config.profile = self.client._fix_profile(p)
