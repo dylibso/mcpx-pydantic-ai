@@ -89,11 +89,6 @@ class TestAgent(unittest.TestCase):
             len(agent._function_tools), 0
         )  # Should have no tools due to ignore
 
-    def test_set_profile(self):
-        """Test setting profile updates client profile"""
-        self.agent.profile = "test_profile"
-        self.assertEqual(self.mock_client.config.profile, "test_profile")
-
     def test_register_custom_tool(self):
         """Test registering a custom tool with custom function"""
         custom_mock = Mock(return_value="custom response")

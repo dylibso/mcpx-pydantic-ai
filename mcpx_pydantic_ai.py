@@ -64,34 +64,29 @@ class Agent(pydantic_ai.Agent):
         super().__init__(*args, **kw)
 
         # Register client tools if available
-        if hasattr(self.client, 'tools'):
+        if hasattr(self.client, "tools"):
             for name, tool in self.client.tools.items():
-                if 'ignore_tools' in kw and name in kw['ignore_tools']:
+                if "ignore_tools" in kw and name in kw["ignore_tools"]:
                     continue
-                if hasattr(self.client, '_make_pydantic_function'):
+                if hasattr(self.client, "_make_pydantic_function"):
                     self.register_tool(tool, self.client._make_pydantic_function(tool))
-
-    @property
-    def profile(self) -> str:
-        return self.client.config.profile
-
-    @profile.setter
-    def profile(self, p: str):
-        self.client.config.profile = self.client._fix_profile(p)
 
     def register_tool(self, tool, function):
         """Register a custom tool with a custom function"""
-        if not hasattr(self, '_function_tools'):
+        if not hasattr(self, "_function_tools"):
             self._function_tools = {}
-        self._function_tools[tool.name] = type('Tool', (), {'function': function})
+        self._function_tools[tool.name] = type("Tool", (), {"function": function})
 
     def reset_tools(self):
         """Reset all tools except for custom ones"""
         # In a real implementation, this would be more sophisticated
         # For now, we'll simulate by removing all tools that start with 'test_'
-        if hasattr(self, '_function_tools'):
-            self._function_tools = {name: tool for name, tool in self._function_tools.items()
-                                  if not name.startswith('test_')}
+        if hasattr(self, "_function_tools"):
+            self._function_tools = {
+                name: tool
+                for name, tool in self._function_tools.items()
+                if not name.startswith("test_")
+            }
 
     def run_sync(self, prompt, update_tools=True):
         """Run the agent synchronously"""
