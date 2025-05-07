@@ -21,3 +21,6 @@ dev = [
 # https://github.com/astral-sh/uv/issues/9513#issuecomment-2519527822
 [tool.setuptools]
 license-files = []
+
+[tool.uv.sources]
+mcp-run = { git = "https://github.com/dylibso/mcp-run-py", branch = "sse-only" }

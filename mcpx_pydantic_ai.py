@@ -4,7 +4,9 @@ import pydantic
 from pydantic import BaseModel, Field
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
-from mcp_run.client import _convert_type
+from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
+from datetime import timedelta
+from mcp_run import MCPClient
 
 from typing import TypedDict, List, Set, AsyncIterator, Any
 import traceback
@@ -26,103 +28,31 @@ class Agent(pydantic_ai.Agent):
     """
 
     client: mcp_run.Client
-    ignore_tools: Set[str]
-    _original_tools: list
-    _registered_tools: List[str]
 
     def __init__(
         self,
         *args,
         client: mcp_run.Client | None = None,
-        ignore_tools: List[str] | None = None,
+        mcp_client: MCPClient | None = None,
+        expires_in: timedelta | None = None,
         **kw,
     ):
         self.client = client or mcp_run.Client()
-        self._original_tools = kw.get("tools", [])
-        self._registered_tools = []
-        self.ignore_tools = set(ignore_tools or [])
+        mcp = mcp_client or self.client.mcp_sse(profile=self.client.config.profile)
+        mcp_servers = kw.get("mcp_servers", [])
+        if mcp.is_sse:
+            mcp_servers.append(MCPServerHTTP(url=mcp.config.url))
+        elif mcp.is_stdio:
+            mcp_servers.append(
+                MCPServerStdio(
+                    command=mcp.config.command,
+                    args=mcp.config.args,
+                    env=mcp.config.env,
+                    cwd=mcp.config.cwd,
+                )
+            )
+        kw["mcp_servers"] = mcp_servers
         super().__init__(*args, **kw)
-        self._update_tools()
-
-        for t in self._original_tools:
-            self._registered_tools.append(t.name)
 
     def set_profile(self, profile: str):
         self.client.set_profile(profile)
-        self._update_tools()
-
-    def register_tool(self, tool: mcp_run.Tool, f=None):
-        if tool.name in self.ignore_tools:
-            return
-
-        def wrap(tool, inner):
-            if inner is not None:
-                props = tool.input_schema["properties"]
-                t = {k: _convert_type(v["type"]) for k, v in props.items()}
-                InputType = TypedDict("Input", t)
-
-                def f(input: InputType):
-                    try:
-                        return inner(input)
-                    except Exception as exc:
-                        return f"ERROR call to tool {tool.name} failed: {traceback.format_exception(exc)}"
-
-                return f
-            else:
-                return self.client._make_pydantic_function(tool)
-
-        self._register_tool(
-            pydantic_ai.Tool(
-                wrap(tool, f),
-                name=tool.name,
-                description=tool.description,
-            )
-        )
-
-        if f is not None:
-            self._registered_tools.append(tool.name)
-
-    def reset_tools(self):
-        for k in list(self._function_tools.keys()):
-            if k not in self._registered_tools:
-                del self._function_tools[k]
-
-    def _update_tools(self):
-        self.reset_tools()
-        for tool in self.client.tools.values():
-            self.register_tool(tool)
-
-    async def run(self, *args, update_tools: bool = True, **kw):
-        if update_tools:
-            self._update_tools()
-        return await super().run(*args, **kw)
-
-    def run_sync(self, *args, update_tools: bool = True, **kw):
-        if update_tools:
-            self._update_tools()
-        return super().run_sync(*args, **kw)
-
-    async def run_async(self, *args, update_tools: bool = True, **kw):
-        if update_tools:
-            self._update_tools()
-        return await super().run_async(*args, **kw)
-
-    def run_stream(
-        self,
-        *args,
-        update_tools: bool = True,
-        **kw,
-    ) -> AsyncIterator[Any]:
-        if update_tools:
-            self._update_tools()
-        return super().run_stream(*args, **kw)
-
-    def iter(
-        self,
-        *args,
-        update_tools: bool = True,
-        **kw,
-    ) -> AsyncIterator[Any]:
-        if update_tools:
-            self._update_tools()
-        return super().iter(*args, **kw)

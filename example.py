@@ -31,8 +31,9 @@ async def run(agent, msg):
     Send a message to an agent and return the result
     """
     global history
-    async with agent.run_stream(msg, message_history=history) as result:
-        return await result.get_data()
+    async with agent.run_mcp_servers():
+        async with agent.run_stream(msg, message_history=history) as result:
+            return await result.get_output()
 
 
 types = ImageList | VowelCount
