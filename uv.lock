@@ -516,8 +516,8 @@ wheels = [
 
 [[package]]
 name = "mcp-run"
-version = "0.4.6"
-source = { git = "https://github.com/dylibso/mcp-run-py?branch=sse-only#9b614d070d73f6cb3d5eb2a3c664778b7f656a72" }
+version = "0.5.0"
+source = { git = "https://github.com/dylibso/mcp-run-py?branch=sse-only#fb0327de856539d1ee7bc96d653ed5a27da9b5db" }
 dependencies = [
     { name = "mcp" },
     { name = "requests" },

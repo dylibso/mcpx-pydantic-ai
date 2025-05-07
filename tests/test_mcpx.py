@@ -1,8 +1,10 @@
 import unittest
 from unittest.mock import Mock, patch
-from mcpx_pydantic_ai import Agent, _convert_type
 from typing import Dict, Any
 import os
+
+
+from mcpx_pydantic_ai import Agent
 
 os.environ["ANTHROPIC_API_KEY"] = "something"
 
@@ -35,33 +37,28 @@ class MockClient:
         }
         self.called_tool = None
         self.called_params = None
+        self.config = Mock(profile="default")
 
     def call_tool(self, tool: str, params: Dict[str, Any]) -> MockResponse:
         self.called_tool = tool
         self.called_params = params
         return MockResponse("mock response")
 
-    def set_profile(self, profile: str):
-        self.profile = profile
-
     def _make_pydantic_function(self, tool):
         def test(input: dict):
             return self.call_tool(tool.name, input).content[0].text
+
         return test
 
+    def mcp_sse(self, profile=None, expires_in=None):
+        mock_mcp = Mock()
+        mock_mcp.is_sse = True
+        mock_mcp.is_stdio = False
+        mock_mcp.config = Mock(url="http://mock-url.com")
+        return mock_mcp
 
-class TestTypeConversion(unittest.TestCase):
-    def test_convert_basic_types(self):
-        self.assertEqual(_convert_type("string"), str)
-        self.assertEqual(_convert_type("boolean"), bool)
-        self.assertEqual(_convert_type("number"), float)
-        self.assertEqual(_convert_type("integer"), int)
-        self.assertEqual(_convert_type("object"), dict)
-        self.assertEqual(_convert_type("array"), list)
-
-    def test_convert_invalid_type(self):
-        with self.assertRaises(TypeError):
-            _convert_type("invalid_type")
+    def _fix_profile(self, profile):
+        return profile
 
 
 class TestAgent(unittest.TestCase):
@@ -94,8 +91,8 @@ class TestAgent(unittest.TestCase):
 
     def test_set_profile(self):
         """Test setting profile updates client profile"""
-        self.agent.set_profile("test_profile")
-        self.assertEqual(self.mock_client.profile, "test_profile")
+        self.agent.profile = "test_profile"
+        self.assertEqual(self.mock_client.config.profile, "test_profile")
 
     def test_register_custom_tool(self):
         """Test registering a custom tool with custom function"""
@@ -153,7 +150,7 @@ class TestAgent(unittest.TestCase):
         self.assertIn("custom_tool", self.agent._function_tools)
         self.assertNotIn("test_tool", self.agent._function_tools)
 
-    @patch("mcpx_pydantic_ai.pydantic_ai.Agent.run_sync")
+    @patch("mcpx_pydantic_ai.Agent.run_sync")
     def test_run_sync_updates_tools(self, mock_run_sync):
         """Test that run_sync updates tools by default"""
         mock_run_sync.return_value = "test response"
@@ -163,7 +160,7 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(result, "test response")
         mock_run_sync.assert_called_once()
 
-    @patch("mcpx_pydantic_ai.pydantic_ai.Agent.run_sync")
+    @patch("mcpx_pydantic_ai.Agent.run_sync")
     def test_run_sync_without_tool_update(self, mock_run_sync):
         """Test that run_sync can skip tool updates"""
         mock_run_sync.return_value = "test response"
