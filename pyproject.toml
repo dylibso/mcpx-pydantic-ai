@@ -1,6 +1,6 @@
 [project]
 name = "mcpx-pydantic-ai"
-version = "0.6.0"
+version = "0.7.0"
 description = "Pydantic Agent with mcp.run tools"
 readme = "README.md"
 requires-python = ">=3.12"

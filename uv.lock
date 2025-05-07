@@ -517,7 +517,7 @@ wheels = [
 [[package]]
 name = "mcp-run"
 version = "0.4.6"
-source = { git = "https://github.com/dylibso/mcp-run-py?branch=sse-only#469865093d0fbad397d255826d9dbb053944ead3" }
+source = { git = "https://github.com/dylibso/mcp-run-py?branch=sse-only#47c767dc68cd2802282d68a055b47ab2fd5c1a1b" }
 dependencies = [
     { name = "mcp" },
     { name = "requests" },
@@ -525,7 +525,7 @@ dependencies = [
 
 [[package]]
 name = "mcpx-pydantic-ai"
-version = "0.6.0"
+version = "0.7.0"
 source = { virtual = "." }
 dependencies = [
     { name = "mcp-run" },
