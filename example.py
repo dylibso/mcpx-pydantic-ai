@@ -22,20 +22,19 @@ def new_agent(result_type, model="claude-3-5-sonnet-latest"):
 
 
 history = []
+types = ImageList | VowelCount
 
 
-async def run(agent, msg):
+async def run(msg):
     """
     Send a message to an agent and return the result
     """
-    global history
+    global history, types
+    agent = new_agent(types)
     async with agent.run_mcp_servers():
         async with agent.run_stream(msg, message_history=history) as result:
             return await result.get_data()
 
-
-types = ImageList | VowelCount
-agent = new_agent(types)
 
 while True:
     msg = input("> ")
@@ -53,7 +52,7 @@ class Type_{name}(BaseModel):
     {s}
         """)
         t = eval(f"Type_{name}")
-        agent = new_agent(types | t)
+        types = types | t
         continue
-    res = asyncio.run(run(agent, msg))
+    res = asyncio.run(run(msg))
     print(">>", res)

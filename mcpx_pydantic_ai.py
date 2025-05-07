@@ -29,6 +29,7 @@ class Agent(pydantic_ai.Agent):
     client: mcp_run.Client
     ignore_tools: Set[str]
     _original_tools: list
+    _original_mcp_servers: list
     _registered_tools: List[str]
 
     def __init__(
@@ -40,6 +41,7 @@ class Agent(pydantic_ai.Agent):
     ):
         self.client = client or mcp_run.Client()
         self._original_tools = kw.get("tools", [])
+        self._original_mcp_servers = kw.get("mcp_servers", [])
         self._registered_tools = []
         self.ignore_tools = set(ignore_tools or [])
         super().__init__(*args, **kw)
@@ -57,14 +59,12 @@ class Agent(pydantic_ai.Agent):
             return
 
         if tool.is_remote:
-            if not isinstance(self._mcp_servers, set):
+            if not isinstance(self._mcp_servers, list):
                 self._mcp_servers = list(self._mcp_servers)
-            for server in self._mcp_servers:
-                if server.url == tool.url:
-                    continue
-            self._mcp_servers.append(
-                MCPServerHTTP(tool.url, headers=tool.headers(self.client))
+            server = MCPServerHTTP(
+                tool.url, headers=self.client._mcp_headers(), timeout=60 * 5
             )
+            self._mcp_servers.append(server)
             return
 
         def wrap(tool, inner):
@@ -95,6 +95,7 @@ class Agent(pydantic_ai.Agent):
             self._registered_tools.append(tool.name)
 
     def reset_tools(self):
+        self._mcp_servers = self._original_mcp_servers.copy()
         for k in list(self._function_tools.keys()):
             if k not in self._registered_tools:
                 del self._function_tools[k]
