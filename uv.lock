@@ -278,16 +278,16 @@ wheels = [
 
 [[package]]
 name = "google-auth"
-version = "2.40.0"
+version = "2.40.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools" },
     { name = "pyasn1-modules" },
     { name = "rsa" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8b/03/6b824ef961fb2ab74f3b54adf2a357f742d88e0667a3471621cb9477da96/google_auth-2.40.0.tar.gz", hash = "sha256:c277cf39f7c192d8540eb6331c08b5a0796e8041af8343ae73dd6b269732ca6c", size = 280934, upload-time = "2025-05-05T18:24:54.79Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/94/a5/38c21d0e731bb716cffcf987bd9a3555cb95877ab4b616cfb96939933f20/google_auth-2.40.1.tar.gz", hash = "sha256:58f0e8416a9814c1d86c9b7f6acf6816b51aba167b2c76821965271bac275540", size = 280975, upload-time = "2025-05-07T01:04:55.3Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8b/40/02101ed0fd0af369558db30f5a90c7d843d5747343bb55f35cb96cd2112b/google_auth-2.40.0-py2.py3-none-any.whl", hash = "sha256:dc3a5078acb1043c3e43685c22d628afe40af8559cf561de388e0c939280fcc8", size = 216004, upload-time = "2025-05-05T18:24:53.115Z" },
+    { url = "https://files.pythonhosted.org/packages/a1/b1/1272c6e80847ba5349f5ccb7574596393d1e222543f5003cb810865c3575/google_auth-2.40.1-py2.py3-none-any.whl", hash = "sha256:ed4cae4f5c46b41bae1d19c036e06f6c371926e97b19e816fc854eff811974ee", size = 216101, upload-time = "2025-05-07T01:04:53.612Z" },
 ]
 
 [[package]]
@@ -517,7 +517,7 @@ wheels = [
 [[package]]
 name = "mcp-run"
 version = "0.4.6"
-source = { git = "https://github.com/dylibso/mcp-run-py?branch=sse-only#47c767dc68cd2802282d68a055b47ab2fd5c1a1b" }
+source = { git = "https://github.com/dylibso/mcp-run-py?branch=sse-only#9b614d070d73f6cb3d5eb2a3c664778b7f656a72" }
 dependencies = [
     { name = "mcp" },
     { name = "requests" },
