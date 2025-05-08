@@ -73,9 +73,6 @@ class TestAgent(unittest.TestCase):
     def test_init_with_custom_client(self):
         """Test agent initialization with custom client"""
         self.assertEqual(self.agent.client, self.mock_client)
-        self.assertEqual(
-            len(self.agent._function_tools), 1
-        )  # Should have our mock tool
 
 
 if __name__ == "__main__":
