@@ -5,7 +5,7 @@ description = "Pydantic Agent with mcp.run tools"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "mcp-run>=0.4.0",
+    "mcp-run>=0.5.0",
     "pydantic>=2.10.4",
     "pydantic-ai>=0.0.35",
 ]
@@ -21,6 +21,3 @@ dev = [
 # https://github.com/astral-sh/uv/issues/9513#issuecomment-2519527822
 [tool.setuptools]
 license-files = []
-
-[tool.uv.sources]
-mcp-run = { git = "https://github.com/dylibso/mcp-run-py", branch = "sse-only" }
